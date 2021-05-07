@@ -5,6 +5,7 @@ import ExcelDropzone from './excel-dropzone.jsx'
 import scores from './scores.js'
 import users from './users.js'
 
+import ScoreSubmitForm from './components/ScoreSubmitForm'
 import Highscores from './components/Highscores'
 import UserScores from './components/UserScores'
 
@@ -27,17 +28,14 @@ export default class Main extends React.Component {
 
 
 
+  handleNewScore = (name, score) => {
 
-  
-  handleNewScore (e) {
-    e.preventDefault();
-
-    this.submitScore(this.state.name, this.state.score);
+    this.submitScore(name, score);
     this.updateHighscores();
 
     // Remove conditional if you want to look up the users scores after submitting a new score
     if (this.state.currUser && 
-        this.state.currUser === this.state.name) this.setUserScores(this.state.currUser); 
+        this.state.currUser === name) this.setUserScores(this.state.currUser); 
   }
 
   handleSheetData (data) {
@@ -53,16 +51,12 @@ export default class Main extends React.Component {
 
 
 
-
-
   submitScore (name, score) {
     
     if (this.isNewUser(name)) users.push( {_id: users.length + 1, name: name} )
     scores.push( { userId: this.getId(name), score: score } )
 
   }
-
-
 
 
 
@@ -95,7 +89,6 @@ export default class Main extends React.Component {
     return true;
 
   }
-
 
 
 
@@ -201,24 +194,20 @@ export default class Main extends React.Component {
         <hr></hr>
         <hr></hr>
         <hr></hr>
-        <form onSubmit={e => this.handleNewScore(e)}>
-          <input required placeholder="name" 
-                 value={this.state.name}
-                 onChange={e => this.setState({name: e.target.value})} />
-          <input required placeholder="score" type='number' step='any' min='0' 
-                 value={this.state.score}
-                 onChange={e => this.setState({score: e.target.value})} />
-          <button type='submit'>Submit Score</button>
-        </form>
+        <hr></hr>
+        <h1>Solution</h1>
+        <hr></hr>
 
-        <div className = 'scores'>
+        <ScoreSubmitForm onSubmit={this.handleNewScore}></ScoreSubmitForm>
+
+        <MTRow className = 'scores'>
           <Highscores 
             scores={this.state.highscores} 
             onUserClick={this.setUserScores}/>
           <UserScores 
             user={this.state.currUser}
             scores={this.state.userScores}  />
-        </div>
+        </MTRow>
       </div>
     )
   }
